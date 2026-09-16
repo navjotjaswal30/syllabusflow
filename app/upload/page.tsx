@@ -140,6 +140,20 @@ export default function UploadPage() {
                 </div>
             </div>
         )}
+
+        {tasks.length > 0 && (
+            <div className="mt-6">
+                <button
+                    onClick={() => {
+                        localStorage.setItem("syllabusflow_tasks", JSON.stringify(tasks));
+                        window.location.href = "/review";
+                    }}
+                    className="rounded-xl bg-black px-6 py-3 font-medium text-white"
+                >
+                    Continue to Review
+                </button>
+            </div>
+        )}
         
         {extractedText && (
           <div className="mt-8 rounded-3xl bg-white p-8 shadow-sm">
