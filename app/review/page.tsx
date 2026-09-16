@@ -14,6 +14,8 @@ type Task = {
 
 export default function ReviewPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [editingTaskTitle, setEditingTaskTitle] = useState<string | null>(null);
+  const [editedTask, setEditedTask] = useState<Task | null>(null);
   function approveTask(taskTitle: string) {
   const updatedTasks = tasks.map((task) => {
     if (task.title === taskTitle) {
@@ -28,6 +30,29 @@ export default function ReviewPage() {
 
   setTasks(updatedTasks);
   localStorage.setItem("syllabusflow_tasks", JSON.stringify(updatedTasks));
+}
+
+function startEditing(task: Task) {
+  setEditingTaskTitle(task.title);
+  setEditedTask(task);
+}
+
+function saveEdit() {
+  if (!editedTask) return;
+
+  const updatedTasks = tasks.map((task) => {
+    if (task.title === editingTaskTitle) {
+      return editedTask;
+    }
+
+    return task;
+  });
+
+  setTasks(updatedTasks);
+  localStorage.setItem("syllabusflow_tasks", JSON.stringify(updatedTasks));
+
+  setEditingTaskTitle(null);
+  setEditedTask(null);
 }
 
   useEffect(() => {
@@ -93,8 +118,11 @@ export default function ReviewPage() {
                         >
                             {task.status === "Approved" ? "Approved" : "Approve"}
                         </button>
-                        <button className="rounded-lg border border-gray-300 px-3 py-1 text-sm">
-                          Edit
+                        <button
+                            onClick={() => startEditing(task)}
+                            className="rounded-lg border border-gray-300 px-3 py-1 text-sm"
+                        >
+                            Edit
                         </button>
                       </td>
                     </tr>
@@ -103,6 +131,87 @@ export default function ReviewPage() {
               </table>
             </div>
           )}
+
+          {editedTask && (
+  <div className="mt-8 rounded-2xl bg-gray-100 p-6">
+    <h2 className="mb-4 text-2xl font-bold text-gray-900">
+      Edit Task
+    </h2>
+
+    <div className="grid gap-4 md:grid-cols-2">
+      <div>
+        <label className="mb-2 block text-sm font-medium text-gray-700">
+          Task Name
+        </label>
+        <input
+          value={editedTask.title}
+          onChange={(event) =>
+            setEditedTask({ ...editedTask, title: event.target.value })
+          }
+          className="w-full rounded-xl border border-gray-300 p-3"
+        />
+      </div>
+
+      <div>
+        <label className="mb-2 block text-sm font-medium text-gray-700">
+          Type
+        </label>
+        <input
+          value={editedTask.type}
+          onChange={(event) =>
+            setEditedTask({ ...editedTask, type: event.target.value })
+          }
+          className="w-full rounded-xl border border-gray-300 p-3"
+        />
+      </div>
+
+      <div>
+        <label className="mb-2 block text-sm font-medium text-gray-700">
+          Due Date
+        </label>
+        <input
+          value={editedTask.dueDate}
+          onChange={(event) =>
+            setEditedTask({ ...editedTask, dueDate: event.target.value })
+          }
+          className="w-full rounded-xl border border-gray-300 p-3"
+        />
+      </div>
+
+      <div>
+        <label className="mb-2 block text-sm font-medium text-gray-700">
+          Status
+        </label>
+        <input
+          value={editedTask.status}
+          onChange={(event) =>
+            setEditedTask({ ...editedTask, status: event.target.value })
+          }
+          className="w-full rounded-xl border border-gray-300 p-3"
+        />
+      </div>
+    </div>
+
+    <div className="mt-6 flex gap-3">
+      <button
+        onClick={saveEdit}
+        className="rounded-xl bg-black px-6 py-3 font-medium text-white"
+      >
+        Save Changes
+      </button>
+
+      <button
+        onClick={() => {
+          setEditingTaskTitle(null);
+          setEditedTask(null);
+        }}
+        className="rounded-xl border border-gray-300 px-6 py-3 font-medium"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+)}
 
           {tasks.length > 0 && (
             <div className="mt-8">
