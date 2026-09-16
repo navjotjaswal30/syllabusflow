@@ -14,6 +14,21 @@ type Task = {
 
 export default function ReviewPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  function approveTask(taskTitle: string) {
+  const updatedTasks = tasks.map((task) => {
+    if (task.title === taskTitle) {
+      return {
+        ...task,
+        status: "Approved",
+      };
+    }
+
+    return task;
+  });
+
+  setTasks(updatedTasks);
+  localStorage.setItem("syllabusflow_tasks", JSON.stringify(updatedTasks));
+}
 
   useEffect(() => {
     const savedTasks = localStorage.getItem("syllabusflow_tasks");
@@ -57,6 +72,7 @@ export default function ReviewPage() {
                     <th className="p-4">Due Date</th>
                     <th className="p-4">Confidence</th>
                     <th className="p-4">Source</th>
+                    <th className="p-4">Status</th>
                     <th className="p-4">Action</th>
                   </tr>
                 </thead>
@@ -69,9 +85,13 @@ export default function ReviewPage() {
                       <td className="p-4">{task.dueDate}</td>
                       <td className="p-4">{task.confidence}</td>
                       <td className="p-4">{task.source}</td>
+                      <td className="p-4">{task.status}</td>
                       <td className="p-4">
-                        <button className="mr-2 rounded-lg bg-black px-3 py-1 text-sm text-white">
-                          Approve
+                        <button
+                            onClick={() => approveTask(task.title)}
+                            className="mr-2 rounded-lg bg-black px-3 py-1 text-sm text-white"
+                        >
+                            {task.status === "Approved" ? "Approved" : "Approve"}
                         </button>
                         <button className="rounded-lg border border-gray-300 px-3 py-1 text-sm">
                           Edit
