@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { mockExtractTasks } from "@/lib/mockExtractTasks";
 const pdf = require("pdf-parse/lib/pdf-parse.js");
 
 export async function POST(request: Request) {
@@ -25,10 +26,13 @@ export async function POST(request: Request) {
 
     const data = await pdf(buffer);
 
+    const tasks = mockExtractTasks(data.text);
+
     return NextResponse.json({
-      fileName: file.name,
-      text: data.text,
-      pages: data.numpages,
+        fileName: file.name,
+        text: data.text,
+        pages: data.numpages,
+        tasks,
     });
   } catch (error) {
     console.error("PDF upload error:", error);

@@ -10,6 +10,16 @@ export default function UploadPage() {
   const [pages, setPages] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [tasks, setTasks] = useState<
+  {
+    title: string;
+    type: string;
+    dueDate: string;
+    confidence: string;
+    source: string;
+    status: string;
+  }[]
+>([]);
 
   async function handleUpload() {
     if (!file) {
@@ -40,6 +50,7 @@ export default function UploadPage() {
       setFileName(data.fileName);
       setPages(data.pages);
       setExtractedText(data.text);
+      setTasks(data.tasks || []);
     } catch {
       setError("Upload failed. Please try again.");
     } finally {
@@ -92,6 +103,44 @@ export default function UploadPage() {
           </div>
         </div>
 
+        {tasks.length > 0 && (
+            <div className="mt-8 rounded-3xl bg-white p-8 shadow-sm">
+                <h2 className="mb-2 text-2xl font-bold text-gray-900">
+                    Extracted Tasks
+                </h2>
+                
+                <p className="mb-6 text-gray-600">
+                    SyllabusFlow found these possible coursework items. Later, this will become the review-and-approve screen.
+                </p>
+                
+                <div className="overflow-hidden rounded-2xl border border-gray-200">
+                    <table className="w-full text-left">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="p-4">Task</th>
+                                <th className="p-4">Type</th>
+                                <th className="p-4">Due Date</th>
+                                <th className="p-4">Confidence</th>
+                                <th className="p-4">Source</th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody>
+                            {tasks.map((task) => (
+                                <tr key={task.title} className="border-t border-gray-200">
+                                    <td className="p-4 font-medium">{task.title}</td>
+                                    <td className="p-4">{task.type}</td>
+                                    <td className="p-4">{task.dueDate}</td>
+                                    <td className="p-4">{task.confidence}</td>
+                                    <td className="p-4">{task.source}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        )}
+        
         {extractedText && (
           <div className="mt-8 rounded-3xl bg-white p-8 shadow-sm">
             <h2 className="mb-2 text-2xl font-bold text-gray-900">
