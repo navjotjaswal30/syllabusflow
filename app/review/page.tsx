@@ -55,6 +55,13 @@ function saveEdit() {
   setEditedTask(null);
 }
 
+function deleteTask(taskTitle: string) {
+  const updatedTasks = tasks.filter((task) => task.title !== taskTitle);
+
+  setTasks(updatedTasks);
+  localStorage.setItem("syllabusflow_tasks", JSON.stringify(updatedTasks));
+}
+
   useEffect(() => {
     const savedTasks = localStorage.getItem("syllabusflow_tasks");
 
@@ -112,18 +119,28 @@ function saveEdit() {
                       <td className="p-4">{task.source}</td>
                       <td className="p-4">{task.status}</td>
                       <td className="p-4">
-                        <button
-                            onClick={() => approveTask(task.title)}
-                            className="mr-2 rounded-lg bg-black px-3 py-1 text-sm text-white"
-                        >
-                            {task.status === "Approved" ? "Approved" : "Approve"}
-                        </button>
-                        <button
-                            onClick={() => startEditing(task)}
-                            className="rounded-lg border border-gray-300 px-3 py-1 text-sm"
-                        >
-                            Edit
-                        </button>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => approveTask(task.title)}
+                                className="rounded-lg bg-black px-3 py-1 text-sm text-white"
+                            >
+                                {task.status === "Approved" ? "Approved" : "Approve"}
+                            </button>
+                            
+                            <button
+                                onClick={() => startEditing(task)}
+                                className="rounded-lg border border-gray-300 px-3 py-1 text-sm"
+                            >
+                                Edit
+                            </button>
+                            
+                            <button
+                                onClick={() => deleteTask(task.title)}
+                                className="rounded-lg border border-red-300 px-3 py-1 text-sm text-red-600"
+                            >
+                                Delete
+                            </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
